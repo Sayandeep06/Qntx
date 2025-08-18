@@ -1,52 +1,6 @@
-# Shared Types Specification
+// Core Domain Types
 
-## Overview
-
-This document defines all TypeScript types and interfaces that are shared across the entire cryptocurrency trading platform. These types ensure type safety and consistency between the Engine, API, Database, WebSocket, Frontend, and Market Maker services.
-
-**Purpose**: Centralized type definitions for cross-service communication and data consistency.
-
-## Installation and Usage
-
-### As NPM Package (Recommended)
-
-```bash
-# Create shared types package
-mkdir shared-types
-cd shared-types
-npm init -y
-```
-
-**Package Structure**:
-```
-shared-types/
-├── src/
-│   ├── index.ts          # Main exports
-│   ├── orders.ts         # Order-related types
-│   ├── trades.ts         # Trade-related types
-│   ├── markets.ts        # Market data types
-│   ├── users.ts          # User-related types
-│   ├── websocket.ts      # WebSocket message types
-│   ├── api.ts            # API request/response types
-│   ├── engine.ts         # Engine-specific types
-│   └── database.ts       # Database entity types
-├── package.json
-└── tsconfig.json
-```
-
-**Installation in services**:
-```bash
-# In each service directory
-npm install file:../shared-types
-```
-
-## Core Domain Types
-
-### 1. Order Types
-
-**File**: `src/orders.ts`
-
-```typescript
+// Order Types
 export type OrderSide = 'buy' | 'sell';
 export type OrderType = 'limit' | 'market' | 'stop' | 'stop_limit';
 export type OrderStatus = 'open' | 'filled' | 'cancelled' | 'rejected' | 'partially_filled';
@@ -74,6 +28,7 @@ export interface LimitOrder extends BaseOrder {
 
 export interface MarketOrder extends BaseOrder {
   type: 'market';
+  price?: string; // Executed price, set after execution
   quantity: string;
   filledQuantity: string;
   averagePrice?: string; // Set after execution
@@ -153,13 +108,8 @@ export interface Fill {
   counterOrderId: string;
   counterUserId: string;
 }
-```
 
-### 2. Trade Types
-
-**File**: `src/trades.ts`
-
-```typescript
+// Trade Types
 export interface Trade {
   tradeId: string;
   market: string;
@@ -205,13 +155,17 @@ export interface TradeStats {
   lastQuantity: string;
   lastTradeTime: number;
 }
-```
 
-### 3. Market Data Types
+// Market Data Types
+export type MarketStatus = 'active' | 'inactive' | 'delisted' | 'maintenance';
 
-**File**: `src/markets.ts`
+export interface TradingFees {
+  makerFee: string; // Decimal string (e.g., "0.001" for 0.1%)
+  takerFee: string;
+  makerFeeDiscount?: string;
+  takerFeeDiscount?: string;
+}
 
-```typescript
 export interface Market {
   symbol: string;
   baseAsset: string;
@@ -229,15 +183,6 @@ export interface Market {
   fees: TradingFees;
   createdAt: number;
   updatedAt: number;
-}
-
-export type MarketStatus = 'active' | 'inactive' | 'delisted' | 'maintenance';
-
-export interface TradingFees {
-  makerFee: string; // Decimal string (e.g., "0.001" for 0.1%)
-  takerFee: string;
-  makerFeeDiscount?: string;
-  takerFeeDiscount?: string;
 }
 
 // Order book depth
@@ -303,13 +248,11 @@ export interface KlineRequest {
   endTime?: number;
   limit?: number; // Default 500, max 1000
 }
-```
 
-### 4. User and Balance Types
+// User and Balance Types
+export type KYCStatus = 'pending' | 'approved' | 'rejected' | 'requires_update';
+export type AccountStatus = 'active' | 'suspended' | 'closed' | 'pending_verification';
 
-**File**: `src/users.ts`
-
-```typescript
 export interface User {
   userId: string;
   email: string;
@@ -326,9 +269,6 @@ export interface User {
   updatedAt: number;
   lastLoginAt?: number;
 }
-
-export type KYCStatus = 'pending' | 'approved' | 'rejected' | 'requires_update';
-export type AccountStatus = 'active' | 'suspended' | 'closed' | 'pending_verification';
 
 // Balance types
 export interface Balance {
@@ -389,13 +329,8 @@ export interface TransactionHistory {
   createdAt: number;
   updatedAt: number;
 }
-```
 
-### 5. WebSocket Message Types
-
-**File**: `src/websocket.ts`
-
-```typescript
+// WebSocket Message Types
 // Base WebSocket message structure
 export interface WebSocketMessage<T = any> {
   stream?: string;
@@ -565,13 +500,8 @@ export interface BalanceUpdateData {
   d: string; // Balance delta
   T: number; // Clear time
 }
-```
 
-### 6. API Request/Response Types
-
-**File**: `src/api.ts`
-
-```typescript
+// API Request/Response Types
 // Standard API response wrapper
 export interface APIResponse<T = any> {
   success: boolean;
@@ -680,13 +610,8 @@ export const API_ERROR_CODES = {
 } as const;
 
 export type APIErrorCode = typeof API_ERROR_CODES[keyof typeof API_ERROR_CODES];
-```
 
-### 7. Engine-Specific Types
-
-**File**: `src/engine.ts`
-
-```typescript
+// Engine-Specific Types
 // Messages from API to Engine
 export interface MessageFromApi {
   type: 'CREATE_ORDER' | 'CANCEL_ORDER' | 'GET_DEPTH' | 'GET_OPEN_ORDERS' | 'ON_RAMP';
@@ -818,13 +743,8 @@ export interface TradeExecutedEvent {
     timestamp: number;
   };
 }
-```
 
-### 8. Database Entity Types
-
-**File**: `src/database.ts`
-
-```typescript
+// Database Entity Types
 // Database message types for async processing
 export interface DbMessage {
   type: 'TRADE_ADDED' | 'ORDER_UPDATE' | 'BALANCE_UPDATE' | 'USER_CREATED' | 'MARKET_CREATED';
@@ -959,15 +879,8 @@ export interface OHLCVEntity {
   taker_buy_volume: string;
   taker_buy_quote_volume: string;
 }
-```
 
-## Utility Types and Helpers
-
-### Type Guards
-
-**File**: `src/type-guards.ts`
-
-```typescript
+// Type Guards
 // Order type guards
 export function isLimitOrder(order: Order): order is LimitOrder {
   return order.type === 'limit';
@@ -1003,15 +916,15 @@ export function isKlineStreamData(data: any): data is KlineStreamData {
 }
 
 // API message type guards
-export function isCreateOrderMessage(msg: MessageFromApi): msg is CreateOrderMessage {
+export function isCreateOrderMessage(msg: MessageFromApi): boolean {
   return msg.type === 'CREATE_ORDER';
 }
 
-export function isCancelOrderMessage(msg: MessageFromApi): msg is CancelOrderMessage {
+export function isCancelOrderMessage(msg: MessageFromApi): boolean {
   return msg.type === 'CANCEL_ORDER';
 }
 
-export function isGetDepthMessage(msg: MessageFromApi): msg is GetDepthMessage {
+export function isGetDepthMessage(msg: MessageFromApi): boolean {
   return msg.type === 'GET_DEPTH';
 }
 
@@ -1040,126 +953,8 @@ export function isValidTimeInForce(tif: string): tif is TimeInForce {
 export function isValidKlineInterval(interval: string): interval is KlineInterval {
   return ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M'].includes(interval);
 }
-```
 
-### Validation Schemas
-
-**File**: `src/validation.ts`
-
-```typescript
-// Validation functions for runtime type checking
-export interface ValidationResult {
-  isValid: boolean;
-  errors: string[];
-}
-
-export function validateCreateOrderRequest(data: any): ValidationResult {
-  const errors: string[] = [];
-
-  if (!data.market || typeof data.market !== 'string') {
-    errors.push('market is required and must be a string');
-  }
-
-  if (!data.side || !isValidOrderSide(data.side)) {
-    errors.push('side is required and must be "buy" or "sell"');
-  }
-
-  if (!data.type || !isValidOrderType(data.type)) {
-    errors.push('type is required and must be "limit", "market", "stop", or "stop_limit"');
-  }
-
-  if (!data.quantity || typeof data.quantity !== 'string' || isNaN(Number(data.quantity))) {
-    errors.push('quantity is required and must be a valid decimal string');
-  }
-
-  if (data.type === 'limit' && (!data.price || typeof data.price !== 'string' || isNaN(Number(data.price)))) {
-    errors.push('price is required for limit orders and must be a valid decimal string');
-  }
-
-  if ((data.type === 'stop' || data.type === 'stop_limit') && 
-      (!data.stopPrice || typeof data.stopPrice !== 'string' || isNaN(Number(data.stopPrice)))) {
-    errors.push('stopPrice is required for stop orders and must be a valid decimal string');
-  }
-
-  if (data.timeInForce && !isValidTimeInForce(data.timeInForce)) {
-    errors.push('timeInForce must be "GTC", "IOC", "FOK", or "GTT"');
-  }
-
-  return {
-    isValid: errors.length === 0,
-    errors
-  };
-}
-
-export function validateCancelOrderRequest(data: any): ValidationResult {
-  const errors: string[] = [];
-
-  if (!data.orderId && !data.clientOrderId) {
-    errors.push('either orderId or clientOrderId is required');
-  }
-
-  if (!data.market || typeof data.market !== 'string') {
-    errors.push('market is required and must be a string');
-  }
-
-  return {
-    isValid: errors.length === 0,
-    errors
-  };
-}
-
-export function validateDepthRequest(data: any): ValidationResult {
-  const errors: string[] = [];
-
-  if (!data.market || typeof data.market !== 'string') {
-    errors.push('market is required and must be a string');
-  }
-
-  if (data.limit !== undefined && (typeof data.limit !== 'number' || data.limit <= 0 || data.limit > 1000)) {
-    errors.push('limit must be a number between 1 and 1000');
-  }
-
-  return {
-    isValid: errors.length === 0,
-    errors
-  };
-}
-
-export function validateKlineRequest(data: any): ValidationResult {
-  const errors: string[] = [];
-
-  if (!data.symbol || typeof data.symbol !== 'string') {
-    errors.push('symbol is required and must be a string');
-  }
-
-  if (!data.interval || !isValidKlineInterval(data.interval)) {
-    errors.push('interval is required and must be a valid interval');
-  }
-
-  if (data.startTime !== undefined && (typeof data.startTime !== 'number' || data.startTime <= 0)) {
-    errors.push('startTime must be a positive number');
-  }
-
-  if (data.endTime !== undefined && (typeof data.endTime !== 'number' || data.endTime <= 0)) {
-    errors.push('endTime must be a positive number');
-  }
-
-  if (data.limit !== undefined && (typeof data.limit !== 'number' || data.limit <= 0 || data.limit > 1000)) {
-    errors.push('limit must be a number between 1 and 1000');
-  }
-
-  return {
-    isValid: errors.length === 0,
-    errors
-  };
-}
-```
-
-### Constants and Enums
-
-**File**: `src/constants.ts`
-
-```typescript
+// Constants
 // Market constants
 export const MAX_PRICE_PRECISION = 8;
 export const MAX_QUANTITY_PRECISION = 8;
@@ -1216,206 +1011,4 @@ export const BLOCKCHAIN_NETWORKS = {
   ETH: ['ethereum', 'bsc', 'polygon'],
   USDT: ['ethereum', 'tron', 'bsc', 'polygon'],
   USDC: ['ethereum', 'bsc', 'polygon'],
-  // ... other assets
 } as const;
-```
-
-## Main Export File
-
-**File**: `src/index.ts`
-
-```typescript
-// Core domain types
-export * from './orders';
-export * from './trades';
-export * from './markets';
-export * from './users';
-
-// Communication types
-export * from './websocket';
-export * from './api';
-export * from './engine';
-export * from './database';
-
-// Utility types
-export * from './type-guards';
-export * from './validation';
-export * from './constants';
-
-// Re-export commonly used types
-export type {
-  Order,
-  Trade,
-  Market,
-  User,
-  Balance,
-  Ticker,
-  Kline,
-  APIResponse,
-  WebSocketMessage,
-  MessageFromApi,
-  MessageToApi,
-} from './index';
-```
-
-## Package Configuration
-
-**File**: `package.json`
-
-```json
-{
-  "name": "@trading-platform/shared-types",
-  "version": "1.0.0",
-  "description": "Shared TypeScript types for the trading platform",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsc",
-    "watch": "tsc --watch",
-    "clean": "rm -rf dist",
-    "prepublishOnly": "npm run clean && npm run build"
-  },
-  "devDependencies": {
-    "typescript": "^5.0.0"
-  },
-  "peerDependencies": {
-    "typescript": ">=4.5.0"
-  },
-  "files": [
-    "dist/**/*",
-    "src/**/*"
-  ],
-  "keywords": [
-    "typescript",
-    "types",
-    "trading",
-    "cryptocurrency",
-    "exchange"
-  ],
-  "author": "Trading Platform Team",
-  "license": "MIT"
-}
-```
-
-**File**: `tsconfig.json`
-
-```json
-{
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "commonjs",
-    "lib": ["ES2020"],
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "removeComments": false,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true
-  },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
-}
-```
-
-## Usage Examples
-
-### In Engine Service
-
-```typescript
-import { 
-  MessageFromApi, 
-  CreateOrderMessage, 
-  Order, 
-  Fill, 
-  isCreateOrderMessage,
-  validateCreateOrderRequest 
-} from '@trading-platform/shared-types';
-
-export class Engine {
-  process(message: MessageFromApi): void {
-    if (isCreateOrderMessage(message)) {
-      const validation = validateCreateOrderRequest(message.data);
-      if (!validation.isValid) {
-        throw new Error(`Invalid order: ${validation.errors.join(', ')}`);
-      }
-      
-      this.createOrder(message.data);
-    }
-  }
-}
-```
-
-### In API Service
-
-```typescript
-import { 
-  APIResponse, 
-  CreateOrderRequest, 
-  CreateOrderResponse,
-  API_ERROR_CODES,
-  validateCreateOrderRequest 
-} from '@trading-platform/shared-types';
-
-app.post('/api/v1/order', (req, res) => {
-  const validation = validateCreateOrderRequest(req.body);
-  
-  if (!validation.isValid) {
-    const response: APIResponse = {
-      success: false,
-      error: {
-        code: API_ERROR_CODES.INVALID_PARAMETER,
-        message: validation.errors.join(', ')
-      },
-      timestamp: Date.now()
-    };
-    return res.status(400).json(response);
-  }
-  
-  // Process order...
-});
-```
-
-### In Frontend
-
-```typescript
-import { 
-  Order, 
-  WebSocketMessage, 
-  DepthStreamData,
-  isDepthStreamData 
-} from '@trading-platform/shared-types';
-
-function handleWebSocketMessage(message: WebSocketMessage) {
-  if (isDepthStreamData(message.data)) {
-    updateOrderBook(message.data);
-  }
-}
-```
-
-## Benefits of Shared Types
-
-1. **Type Safety**: Compile-time checking across all services
-2. **Consistency**: Ensures all services use the same data structures
-3. **Documentation**: Types serve as living documentation
-4. **Refactoring**: Easy to update types across the entire system
-5. **IDE Support**: Better autocomplete and IntelliSense
-6. **Runtime Validation**: Type guards and validation functions
-7. **Version Control**: Centralized versioning of type definitions
-
-This shared types specification provides a complete type system that ensures consistency and type safety across all services in the trading platform.
