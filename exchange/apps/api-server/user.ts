@@ -1,6 +1,7 @@
 import express from 'express'
 import z, { success } from 'zod'
 export const userRouter = express.Router()
+import { prisma } from 'db'
 
 const userSchema = z.object({
     username: z.email(),
@@ -10,14 +11,12 @@ const userSchema = z.object({
 userRouter.post('/signup', async (req, res)=>{
     try{    
         const data = userSchema.safeParse(req.body)
-        /*
-        const user = await prismaClient.user.create({
+        const user = await prisma.user.create({
             data: {
-                username: data?.username,
-                password: data?.password
+                username: data?.data?.username,
+                password: data?.data?.password
             }
         })
-        */
         res.json({
             success: true,
             user: "user"
@@ -30,17 +29,15 @@ userRouter.post('/signup', async (req, res)=>{
    }
 })
 
-userRouter.post('/signin', (req, res)=>{
+userRouter.post('/signin', async(req, res)=>{
     try{    
         const data = userSchema.safeParse(req.body)
-        /*
-        const user = await prismaClient.user.findFirst({
+        const user = await prisma.user.findFirst({
             data: {
-                username: data?.username,
-                password: data?.password
+                username: data?.data?.username,
+                password: data?.data?.password
             }
         })
-        */
         res.json({
             success: true,
             user: "user"
