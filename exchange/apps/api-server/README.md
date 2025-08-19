@@ -177,8 +177,7 @@ Currently using simplified user ID based authentication. For production deployme
     ["100.75", "100"],
     ["101.00", "250"],
     ["101.25", "180"]
-  ],
-  "timestamp": 1692345600000
+  ]
 }
 ```
 

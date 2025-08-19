@@ -1,14 +1,15 @@
 import express from 'express'
-import z, { success } from 'zod'
+import z from 'zod'
 export const userRouter = express.Router()
 import { prisma } from 'db'
+import jwt from 'jsonwebtoken'
 
 const userSchema = z.object({
     username: z.email(),
     password: z.string()
 })
 
-userRouter.post('/signup', async (req, res)=>{
+userRouter.post('/signup', async (req, res) => {
     try{    
         const data = userSchema.safeParse(req.body)
         const user = await prisma.user.create({
@@ -19,7 +20,7 @@ userRouter.post('/signup', async (req, res)=>{
         })
         res.json({
             success: true,
-            user: "user"
+            user: user.id
         })
    }catch(error){
         res.json({
@@ -29,8 +30,8 @@ userRouter.post('/signup', async (req, res)=>{
    }
 })
 
-userRouter.post('/signin', async(req, res)=>{
-    try{    
+userRouter.post('/signin', async (req, res) => {
+    try{
         const data = userSchema.safeParse(req.body)
         const user = await prisma.user.findFirst({
             data: {
@@ -38,9 +39,15 @@ userRouter.post('/signin', async(req, res)=>{
                 password: data?.data?.password
             }
         })
+
+        const token = jwt.sign({
+            id: user.id
+        }, process.env.JWT_SECRET!)
+
         res.json({
             success: true,
-            user: "user"
+            user: user.username,
+            token
         })
    }catch(error){
         res.json({

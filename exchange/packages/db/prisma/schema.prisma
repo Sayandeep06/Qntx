@@ -26,33 +26,34 @@ model Market {
 }
 
 model Order {
-  id       String @id @default(uuid())
-  userId   String
-  market   String
-  side     String
-  price    Float
-  quantity Float
-  filled   Float  @default(0)
-  status   String @default("open")
-
-  user      User   @relation(fields: [userId], references: [id])
-  marketRef Market @relation(fields: [market], references: [symbol])
+  id        String   @id @default(uuid())
+  userId    String
+  market    String
+  side      String
+  price     Float
+  quantity  Float
+  filled    Float    @default(0)
+  status    String   @default("open")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  marketRef Market   @relation(fields: [market], references: [symbol])
   trades    Trade[]
 }
 
 model Trade {
-  id       String @id @default(uuid())
-  orderId  String
-  market   String
-  price    Float
-  quantity Float
-
-  order     Order  @relation(fields: [orderId], references: [id])
-  marketRef Market @relation(fields: [market], references: [symbol])
+  id        String   @id @default(uuid())
+  orderId   String
+  market    String
+  price     Float
+  quantity  Float
+  createdAt DateTime @default(now())
+  order     Order    @relation(fields: [orderId], references: [id])
+  marketRef Market   @relation(fields: [market], references: [symbol])
 }
 
 model Balance {
-  userId String @map("user_id")
+  userId String
   asset  String
   amount Float  @default(0)
 
