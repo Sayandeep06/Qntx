@@ -194,6 +194,7 @@ export const CANCEL_ORDER = 'CANCEL_ORDER';
 export const ON_RAMP = 'ON_RAMP';
 export const GET_DEPTH = 'GET_DEPTH';
 export const GET_OPEN_ORDERS = 'GET_OPEN_ORDERS';
+export const GET_BALANCE = 'GET_BALANCE';
 
 // Engine response constants
 export const ORDER_CREATED = 'ORDER_CREATED';
@@ -203,6 +204,7 @@ export const BALANCE_UPDATED = 'BALANCE_UPDATED';
 export const DEPTH_UPDATE = 'DEPTH_UPDATE';
 export const OPEN_ORDERS_RESPONSE = 'OPEN_ORDERS_RESPONSE';
 export const TRADE_EXECUTED = 'TRADE_EXECUTED';
+export const BALANCE_RESPONSE = 'BALANCE_RESPONSE';
 
 // Message Types for Engine Communication
 export type MessageToEngine = {
@@ -224,8 +226,7 @@ export type MessageToEngine = {
     type: typeof ON_RAMP,
     data: {
         amount: string,
-        userId: string,
-        txnId: string
+        userId: string
     }
 } | {
     type: typeof GET_DEPTH,
@@ -237,6 +238,11 @@ export type MessageToEngine = {
     data: {
         userId: string,
         market: string,
+    }
+} | {
+    type: typeof GET_BALANCE,
+    data: {
+        userId: string,
     }
 };
 
@@ -301,6 +307,13 @@ export type MessageFromEngine = {
         trade: Trade,
         makerOrder: Order,
         takerOrder: Order,
+        timestamp: number
+    }
+} | {
+    type: typeof BALANCE_RESPONSE,
+    data: {
+        userId: string,
+        balances: Balance[],
         timestamp: number
     }
 };
