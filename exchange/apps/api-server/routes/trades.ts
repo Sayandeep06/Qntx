@@ -1,6 +1,5 @@
 import express from 'express'
 export const tradeRouter = express.Router()
-import { prisma } from 'db'
 
 tradeRouter.get('/trades', async (req, res)=>{
     try{
