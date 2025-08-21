@@ -16,12 +16,28 @@ orderRouter.post('/order', middleware, async (req, res)=>{
             userId
         }
     });
-    res.json(response.data);
+    res.json(response);
 })
 
 orderRouter.get('/order', middleware, async (req, res)=>{
-    const market = req.query.market
+    const market = req.query.market as string
+    const userId = req.userId as string
+
+    const response: MessageFromEngine = await RedisClient.getInstance().publishSubscribe({
+        type: 'GET_OPEN_ORDERS',
+        data:{
+            userId,
+            market
+        }
+    })
+
+    res.json(response);
+})
+
+orderRouter.post('/order:orderId', middleware, async (req, res)=>{
+    const orderId = req.params.orderId;
     const userId = req.userId
 
     
+
 })
