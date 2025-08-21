@@ -1,7 +1,8 @@
 import { createClient } from "redis";
 import type { RedisClientType } from "redis";
+import type { MessageFromEngine, MessageToEngine } from "types";
 
-class RedisClient{
+export class RedisClient{
     private publisher: RedisClientType;
     private subscriber: RedisClientType;
     private static instance: RedisClient
@@ -23,9 +24,9 @@ class RedisClient{
         return this.instance
     }
 
-    public publishSubscribe(message: string){
+    public publishSubscribe(message: MessageToEngine){
         const id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        return new Promise<string>((resolve)=>{
+        return new Promise<MessageFromEngine>((resolve)=>{
             this.subscriber.subscribe(id, (message)=>{
                 this.subscriber.unsubscribe(id)
                 resolve(JSON.parse(message))

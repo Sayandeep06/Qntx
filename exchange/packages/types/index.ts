@@ -34,7 +34,7 @@ export interface MarketOrder extends BaseOrder {
 
 export type Order = LimitOrder | MarketOrder;
 
-// Order creation requests
+
 export interface CreateOrderRequest {
   market: string;
   side: OrderSide;
@@ -64,7 +64,7 @@ export interface CancelOrderResponse {
   timestamp: number;
 }
 
-// Order fills
+
 export interface Fill {
   fillId: string;
   tradeId: string;
@@ -76,7 +76,6 @@ export interface Fill {
   isMaker: boolean;
 }
 
-// Trade Types
 export interface Trade {
   tradeId: string;
   market: string;
@@ -89,7 +88,6 @@ export interface Trade {
   sellerId: string;
 }
 
-// Market Data Types
 export type MarketStatus = 'active' | 'inactive';
 
 export interface Market {
@@ -107,7 +105,7 @@ export interface Market {
   updatedAt: number;
 }
 
-// Order book
+
 export interface OrderBookEntry {
   price: string;
   quantity: string;
@@ -121,7 +119,6 @@ export interface Depth {
   timestamp: number;
 }
 
-// User and Balance Types
 export interface User {
   userId: string;
   email: string;
@@ -190,3 +187,120 @@ export const SUPPORTED_ASSETS = [
 ] as const;
 
 export type SupportedAsset = typeof SUPPORTED_ASSETS[number];
+
+
+export const CREATE_ORDER = 'CREATE_ORDER';
+export const CANCEL_ORDER = 'CANCEL_ORDER';
+export const ON_RAMP = 'ON_RAMP';
+export const GET_DEPTH = 'GET_DEPTH';
+export const GET_OPEN_ORDERS = 'GET_OPEN_ORDERS';
+
+// Engine response constants
+export const ORDER_CREATED = 'ORDER_CREATED';
+export const ORDER_CANCELLED = 'ORDER_CANCELLED';
+export const ORDER_UPDATED = 'ORDER_UPDATED';
+export const BALANCE_UPDATED = 'BALANCE_UPDATED';
+export const DEPTH_UPDATE = 'DEPTH_UPDATE';
+export const OPEN_ORDERS_RESPONSE = 'OPEN_ORDERS_RESPONSE';
+export const TRADE_EXECUTED = 'TRADE_EXECUTED';
+
+// Message Types for Engine Communication
+export type MessageToEngine = {
+    type: typeof CREATE_ORDER,
+    data: {
+        market: string,
+        price: string,
+        quantity: string,
+        side: "buy" | "sell",
+        userId: string
+    }
+} | {
+    type: typeof CANCEL_ORDER,
+    data: {
+        orderId: string,
+        market: string,
+    }
+} | {
+    type: typeof ON_RAMP,
+    data: {
+        amount: string,
+        userId: string,
+        txnId: string
+    }
+} | {
+    type: typeof GET_DEPTH,
+    data: {
+        market: string,
+    }
+} | {
+    type: typeof GET_OPEN_ORDERS,
+    data: {
+        userId: string,
+        market: string,
+    }
+};
+
+export type MessageFromEngine = {
+    type: typeof ORDER_CREATED,
+    data: {
+        orderId: string,
+        userId: string,
+        market: string,
+        side: "buy" | "sell",
+        price: string,
+        quantity: string,
+        status: OrderStatus,
+        timestamp: number,
+        fills?: Fill[]
+    }
+} | {
+    type: typeof ORDER_CANCELLED,
+    data: {
+        orderId: string,
+        userId: string,
+        market: string,
+        remainingQuantity: string,
+        timestamp: number
+    }
+} | {
+    type: typeof ORDER_UPDATED,
+    data: {
+        orderId: string,
+        userId: string,
+        market: string,
+        status: OrderStatus,
+        filledQuantity: string,
+        remainingQuantity: string,
+        timestamp: number,
+        fills: Fill[]
+    }
+} | {
+    type: typeof BALANCE_UPDATED,
+    data: {
+        userId: string,
+        asset: string,
+        available: string,
+        locked: string,
+        total: string,
+        timestamp: number
+    }
+} | {
+    type: typeof DEPTH_UPDATE,
+    data: Depth
+} | {
+    type: typeof OPEN_ORDERS_RESPONSE,
+    data: {
+        userId: string,
+        market: string,
+        orders: Order[],
+        timestamp: number
+    }
+} | {
+    type: typeof TRADE_EXECUTED,
+    data: {
+        trade: Trade,
+        makerOrder: Order,
+        takerOrder: Order,
+        timestamp: number
+    }
+};
