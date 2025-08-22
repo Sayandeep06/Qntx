@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document provides a comprehensive specification for all REST API endpoints in the cryptocurrency trading platform. The API follows RESTful principles and provides JSON responses.
+This document provides a comprehensive specification for all REST API endpoints in the stock trading platform. The API follows RESTful principles and provides JSON responses.
 
 **Base URL**: `http://localhost:3000/api/v1`
 

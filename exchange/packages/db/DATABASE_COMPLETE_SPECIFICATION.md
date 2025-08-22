@@ -2,7 +2,7 @@
 
 ## Overview
 
-The database service manages all persistent data for the cryptocurrency trading platform using TimescaleDB (PostgreSQL with time-series extensions) for optimal performance with time-series data like trades and price history.
+The database service manages all persistent data for the stock trading platform using TimescaleDB (PostgreSQL with time-series extensions) for optimal performance with time-series data like trades and price history.
 
 **Technology Stack**:
 - **Database**: TimescaleDB (PostgreSQL 12+ with TimescaleDB extension)
@@ -69,9 +69,9 @@ CREATE TABLE markets (
 
 -- Sample data
 INSERT INTO markets (symbol, base_asset, quote_asset, tick_size, step_size) VALUES
-('TATA_INR', 'TATA', 'INR', 0.01, 0.001),
-('RELIANCE_INR', 'RELIANCE', 'INR', 0.01, 0.001),
-('HDFC_INR', 'HDFC', 'INR', 0.01, 0.001);
+('AAPL_USD', 'AAPL', 'USD', 0.01, 0.001),
+('GOOGL_USD', 'GOOGL', 'USD', 0.01, 0.001),
+('MSFT_USD', 'MSFT', 'USD', 0.01, 0.001);
 ```
 
 ### 3. Orders Table

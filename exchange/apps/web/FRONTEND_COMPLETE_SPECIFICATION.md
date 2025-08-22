@@ -2,7 +2,7 @@
 
 ## Overview
 
-The frontend is a modern React-based trading interface built with Next.js, providing a responsive and real-time cryptocurrency trading experience. It features advanced charting, order book visualization, and seamless WebSocket integration for live market data.
+The frontend is a modern React-based trading interface built with Next.js, providing a responsive and real-time stock trading experience. It features advanced charting, order book visualization, and seamless WebSocket integration for live market data.
 
 **Technology Stack**:
 - **Framework**: Next.js 14 (React 18)
@@ -66,8 +66,8 @@ frontend/
 │   ├── layout.tsx           # Root layout
 │   └── page.tsx             # Home page
 ├── public/                  # Static assets
-│   ├── sol.webp
-│   ├── usdc.webp
+│   ├── stocks.webp
+│   ├── usd.webp
 │   └── next.svg
 ├── package.json
 ├── tailwind.config.ts       # Tailwind configuration
@@ -384,7 +384,7 @@ export function SwapUI({ market }: { market: string }) {
       {/* Balance Display */}
       <div className="flex items-center justify-between">
         <p className="text-xs">Available Balance</p>
-        <p className="text-xs">{balance.toFixed(2)} USDC</p>
+        <p className="text-xs">{balance.toFixed(2)} USD</p>
       </div>
 
       {/* Price Input (for limit orders) */}
@@ -721,7 +721,7 @@ export default function Home() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-8">Cryptocurrency Exchange</h1>
+      <h1 className="text-3xl font-bold mb-8">Stock Exchange</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {markets.map(market => (
@@ -1040,7 +1040,7 @@ import { SwapUI } from '../components/SwapUI';
 
 describe('SwapUI', () => {
   it('should switch between buy and sell tabs', () => {
-    render(<SwapUI market="TATA_INR" />);
+    render(<SwapUI market="AAPL_USD" />);
     
     const sellButton = screen.getByText('Sell');
     fireEvent.click(sellButton);
@@ -1049,7 +1049,7 @@ describe('SwapUI', () => {
   });
 
   it('should validate price input', () => {
-    render(<SwapUI market="TATA_INR" />);
+    render(<SwapUI market="AAPL_USD" />);
     
     const priceInput = screen.getByPlaceholderText('0.00');
     fireEvent.change(priceInput, { target: { value: 'invalid' } });

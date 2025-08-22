@@ -402,7 +402,7 @@ const defaultConfig: MarketMakerConfig = {
   baseUrl: "http://localhost:3000",
   totalBids: 15,
   totalAsks: 15,
-  market: "TATA_INR",
+  market: "AAPL_USD",
   userId: "5",
   spreadPercent: 0.5, // 0.5% spread
   maxOrderSize: 2.0,
@@ -899,7 +899,7 @@ export const productionConfig: MarketMakerConfig = {
   baseUrl: "https://api.exchange.com",
   totalBids: 20,
   totalAsks: 20,
-  market: "BTC_USDT",
+  market: "AAPL_USD",
   userId: "mm_prod_001",
   spreadPercent: 0.1, // Tighter spreads in production
   maxOrderSize: 0.1,
@@ -924,7 +924,7 @@ export const developmentConfig: MarketMakerConfig = {
   baseUrl: "http://localhost:3000",
   totalBids: 5,
   totalAsks: 5,
-  market: "TATA_INR",
+  market: "AAPL_USD",
   userId: "5",
   spreadPercent: 1.0, // Wider spreads for testing
   maxOrderSize: 1.0,

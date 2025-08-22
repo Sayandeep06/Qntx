@@ -2,7 +2,7 @@
 
 ## Overview
 
-The WebSocket API provides real-time market data streaming for the cryptocurrency trading platform. It supports multiple data streams including order book updates, trade feeds, and ticker information.
+The WebSocket API provides real-time market data streaming for the stock trading platform. It supports multiple data streams including order book updates, trade feeds, and ticker information.
 
 **WebSocket URL**: `ws://localhost:3001`
 
@@ -38,7 +38,7 @@ Currently using simplified user ID based authentication. Send user identificatio
 ```javascript
 ws.send(JSON.stringify({
   method: 'SUBSCRIBE',
-  params: ['depth@TATA_INR'],
+  params: ['depth@AAPL_USD'],
   id: 1
 }));
 ```
@@ -90,7 +90,7 @@ ws.send(JSON.stringify({
 ```json
 {
   "method": "SUBSCRIBE",
-  "params": ["depth@TATA_INR"],
+  "params": ["depth@AAPL_USD"],
   "id": 1
 }
 ```
@@ -98,10 +98,10 @@ ws.send(JSON.stringify({
 **Message Format**:
 ```json
 {
-  "stream": "depth@TATA_INR",
+  "stream": "depth@AAPL_USD",
   "data": {
     "e": "depth",
-    "s": "TATA_INR",
+    "s": "AAPL_USD",
     "b": [
       ["100.50", "150"],
       ["100.25", "200"]
@@ -137,7 +137,7 @@ ws.send(JSON.stringify({
 ```json
 {
   "method": "SUBSCRIBE",
-  "params": ["trade@TATA_INR"],
+  "params": ["trade@AAPL_USD"],
   "id": 2
 }
 ```
@@ -145,10 +145,10 @@ ws.send(JSON.stringify({
 **Message Format**:
 ```json
 {
-  "stream": "trade@TATA_INR",
+  "stream": "trade@AAPL_USD",
   "data": {
     "e": "trade",
-    "s": "TATA_INR",
+    "s": "AAPL_USD",
     "t": 12345,
     "p": "100.50",
     "q": "5.0",
@@ -177,7 +177,7 @@ ws.send(JSON.stringify({
 ```json
 {
   "method": "SUBSCRIBE",
-  "params": ["ticker@TATA_INR"],
+  "params": ["ticker@AAPL_USD"],
   "id": 3
 }
 ```
@@ -185,10 +185,10 @@ ws.send(JSON.stringify({
 **Message Format**:
 ```json
 {
-  "stream": "ticker@TATA_INR",
+  "stream": "ticker@AAPL_USD",
   "data": {
     "e": "24hrTicker",
-    "s": "TATA_INR",
+    "s": "AAPL_USD",
     "p": "1.50",
     "P": "1.52",
     "w": "100.25",
@@ -249,7 +249,7 @@ ws.send(JSON.stringify({
 ```json
 {
   "method": "SUBSCRIBE",
-  "params": ["kline_1h@TATA_INR"],
+  "params": ["kline_1h@AAPL_USD"],
   "id": 4
 }
 ```
@@ -257,14 +257,14 @@ ws.send(JSON.stringify({
 **Message Format**:
 ```json
 {
-  "stream": "kline_1h@TATA_INR",
+  "stream": "kline_1h@AAPL_USD",
   "data": {
     "e": "kline",
-    "s": "TATA_INR",
+    "s": "AAPL_USD",
     "k": {
       "t": 1692345600000,
       "T": 1692349200000,
-      "s": "TATA_INR",
+      "s": "AAPL_USD",
       "i": "1h",
       "o": "100.00",
       "c": "100.50",
@@ -318,7 +318,7 @@ ws.send(JSON.stringify({
   "stream": "user@user123",
   "data": {
     "e": "executionReport",
-    "s": "TATA_INR",
+    "s": "AAPL_USD",
     "c": "",
     "S": "buy",
     "o": "LIMIT",
@@ -367,7 +367,7 @@ ws.send(JSON.stringify({
 ```javascript
 ws.send(JSON.stringify({
   method: 'SUBSCRIBE',
-  params: ['depth@TATA_INR'],
+  params: ['depth@AAPL_USD'],
   id: 1
 }));
 ```
@@ -378,9 +378,9 @@ ws.send(JSON.stringify({
 ws.send(JSON.stringify({
   method: 'SUBSCRIBE',
   params: [
-    'depth@TATA_INR',
-    'trade@TATA_INR',
-    'ticker@TATA_INR'
+    'depth@AAPL_USD',
+    'trade@AAPL_USD',
+    'ticker@AAPL_USD'
   ],
   id: 1
 }));
@@ -391,7 +391,7 @@ ws.send(JSON.stringify({
 ```javascript
 ws.send(JSON.stringify({
   method: 'UNSUBSCRIBE',
-  params: ['depth@TATA_INR'],
+  params: ['depth@AAPL_USD'],
   id: 2
 }));
 ```
@@ -409,8 +409,8 @@ ws.send(JSON.stringify({
 ```json
 {
   "result": [
-    "depth@TATA_INR",
-    "trade@TATA_INR"
+    "depth@AAPL_USD",
+    "trade@AAPL_USD"
   ],
   "id": 3
 }
@@ -594,8 +594,8 @@ class MarketDataClient {
 
 // Usage
 const client = new MarketDataClient('ws://localhost:3001');
-client.subscribeToDepth('TATA_INR');
-client.subscribeToTrades('TATA_INR');
+client.subscribeToDepth('AAPL_USD');
+client.subscribeToTrades('AAPL_USD');
 ```
 
 ### React Hook for WebSocket
@@ -722,7 +722,7 @@ class TradingWebSocketClient:
 async def main():
     client = TradingWebSocketClient('ws://localhost:3001')
     await client.connect()
-    await client.subscribe(['depth@TATA_INR', 'trade@TATA_INR'])
+    await client.subscribe(['depth@AAPL_USD', 'trade@AAPL_USD'])
     await client.listen()
 
 asyncio.run(main())
@@ -737,7 +737,7 @@ asyncio.run(main())
 cargo install websocat
 
 # Connect and subscribe
-echo '{"method":"SUBSCRIBE","params":["depth@TATA_INR"],"id":1}' | websocat ws://localhost:3001
+echo '{"method":"SUBSCRIBE","params":["depth@AAPL_USD"],"id":1}' | websocat ws://localhost:3001
 ```
 
 ### Using wscat
@@ -750,7 +750,7 @@ npm install -g wscat
 wscat -c ws://localhost:3001
 
 # Send subscription
-{"method":"SUBSCRIBE","params":["depth@TATA_INR"],"id":1}
+{"method":"SUBSCRIBE","params":["depth@AAPL_USD"],"id":1}
 ```
 
 ## Performance Considerations

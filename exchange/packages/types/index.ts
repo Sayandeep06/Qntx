@@ -183,7 +183,7 @@ export const MIN_ORDER_VALUE = '10';
 export const MAX_ORDER_VALUE = '1000000';
 
 export const SUPPORTED_ASSETS = [
-  'BTC', 'ETH', 'USDT', 'USDC', 'INR'
+  'AAPL', 'GOOGL', 'MSFT', 'TSLA', 'USD'
 ] as const;
 
 export type SupportedAsset = typeof SUPPORTED_ASSETS[number];
