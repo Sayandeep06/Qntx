@@ -10,4 +10,5 @@ const wss = new WebSocketServer({port:8080});
 
 wss.on('connection', (ws)=>{
     //add socket to the user and then user to subsciber map
+    //user.addUser(ws)
 })
