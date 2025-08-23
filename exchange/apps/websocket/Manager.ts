@@ -1,16 +1,24 @@
 import type { WebSocket } from "ws"
 class User{
-    public socket: WebSocket
+    public static socket: WebSocket | null = null
     private static instance: User;
+
+
     constructor(){
         
     }
 
-    public getInstance(){
-        
+    public static getInstance(){
+        if(!this.getInstance){
+            this.instance = new User();
+        }
+        return this.instance
     }
 
-    public static addUser(){
+    public static addUser(ws: WebSocket){
+        this.socket = ws;
+
+        
 
     }
 
