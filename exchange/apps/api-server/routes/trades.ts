@@ -7,7 +7,7 @@ tradeRouter.get('/trades', async (req, res)=>{
 
         res.json({
             success: true,
-//          trades: 
+            //trades: 
         })
     }catch(error){
         res.json({
