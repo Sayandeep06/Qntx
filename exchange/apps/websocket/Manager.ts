@@ -1,6 +1,8 @@
+import * as ws from 'ws';
+
 type usersSchema = {
     id: string,
-    socket: WebSocket,
+    socket: ws.WebSocket,
     market: string[]
 }[]
 
@@ -8,7 +10,7 @@ type subSchema = {
     [market: string]: usersSchema
 }
 
-class User{
+export class User{
     public static socket: WebSocket | null = null
     private static instance: User;
     private users: usersSchema;
@@ -25,8 +27,8 @@ class User{
         return this.instance
     }
 
-    public static addUser(ws: WebSocket){
-        const instance = this.getInstance()
+    public addUser(ws: ws.WebSocket){
+        const instance = User.getInstance()
         const id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         instance.users.push({
             id,
@@ -64,7 +66,4 @@ class User{
             console.log("Error while subscribing to ws server")
         }
     }
-
-
-
 }
