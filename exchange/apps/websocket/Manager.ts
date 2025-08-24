@@ -1,5 +1,3 @@
-import type { WebSocket } from "ws"
-
 type usersSchema = {
     id: string,
     socket: WebSocket,
@@ -30,25 +28,31 @@ class User{
     public static addUser(ws: WebSocket){
         const instance = this.getInstance()
         const id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
         instance.users.push({
             id,
             socket: ws,
             market: []
         })
-
         return id;
-        
     }
 
     public static subscribe(userId: string, market: string){
         try{
             const instance = this.getInstance();
             const user = instance.users.find(u => u.id === userId);
+
             if(!user){
                 console.log("User doesn't exist")
                 return;
             }
+
+            instance.users.forEach(u => {
+                if(u.id === userId){
+                    u.market.push(market)
+                }
+                return u;
+            })
+
             if(!instance.subs[market]){
                 instance.subs[market] = []
             }
@@ -56,10 +60,11 @@ class User{
             if(!alreadyExists){
                 instance.subs[market].push(user)
             }
-            return instance.subs[market]
         }catch(error){
             console.log("Error while subscribing to ws server")
         }
     }
+
+
 
 }
