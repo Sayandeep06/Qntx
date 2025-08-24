@@ -2,7 +2,7 @@
 
 ## Overview
 
-The frontend is a modern React-based trading interface built with Next.js, providing a responsive and real-time stock trading experience. It features advanced charting, order book visualization, and seamless WebSocket integration for live market data.
+Frontend is a modern React-based trading interface built with Next.js, providing a responsive and real-time stock trading experience. It features advanced charting, order book visualization, and seamless WebSocket integration for live market data.
 
 **Technology Stack**:
 - **Framework**: Next.js 14 (React 18)
