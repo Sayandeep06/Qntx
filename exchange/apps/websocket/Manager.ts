@@ -1,21 +1,22 @@
 import type { WebSocket } from "ws"
 
-type userSchema = {
+type usersSchema = {
     id: string,
-    socket: WebSocket
+    socket: WebSocket,
+    market: string[]
 }[]
 
 type subSchema = {
-    [market: string]: userSchema
+    [market: string]: usersSchema
 }
 
 class User{
     public static socket: WebSocket | null = null
     private static instance: User;
-    private user: userSchema;
+    private users: usersSchema;
     private subs: subSchema;
     constructor(){
-        this.user = []
+        this.users = []
         this.subs = {}
     }
 
@@ -27,7 +28,38 @@ class User{
     }
 
     public static addUser(ws: WebSocket){
+        const instance = this.getInstance()
+        const id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
+        instance.users.push({
+            id,
+            socket: ws,
+            market: []
+        })
+
+        return id;
+        
+    }
+
+    public static subscribe(userId: string, market: string){
+        try{
+            const instance = this.getInstance();
+            const user = instance.users.find(u => u.id === userId);
+            if(!user){
+                console.log("User doesn't exist")
+                return;
+            }
+            if(!instance.subs[market]){
+                instance.subs[market] = []
+            }
+            const alreadyExists = instance.subs[market].some(u => u.id === userId);
+            if(!alreadyExists){
+                instance.subs[market].push(user)
+            }
+            return instance.subs[market]
+        }catch(error){
+            console.log("Error while subscribing to ws server")
+        }
     }
 
 }
