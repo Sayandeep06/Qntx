@@ -32,5 +32,9 @@ balanceRouter.post('/onramp', middleware, async (req, res)=>{
 })
 
 balanceRouter.post('/balance', middleware, async (req, res)=>{
-    
+    try{
+
+    }catch(error){
+        
+    }
 })
