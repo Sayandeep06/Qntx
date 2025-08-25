@@ -8,9 +8,10 @@ import { WebSocketServer } from 'ws';
 import * as ws from 'ws';
 
 const wss = new WebSocketServer({port:8080});
+const userManager = User.getInstance();
 
 wss.on('connection', (ws: ws.WebSocket)=>{
-    User.getInstance().addUser(ws)
+    userManager.addUser(ws)
     ws.on('message', (message: string)=>{
         
     })
