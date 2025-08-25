@@ -206,6 +206,22 @@ export const OPEN_ORDERS_RESPONSE = 'OPEN_ORDERS_RESPONSE';
 export const TRADE_EXECUTED = 'TRADE_EXECUTED';
 export const BALANCE_RESPONSE = 'BALANCE_RESPONSE';
 
+
+export const SUBSCRIBE = 'SUBSCRIBE';
+export const UNSUBSCRIBE = 'UNSUBSCRIBE';
+
+export type WebSocketMessageFromClient = {
+    type: typeof SUBSCRIBE,
+    data: {
+      markets: string[]  
+    }
+} | {
+    type: typeof UNSUBSCRIBE, 
+    data: {
+      markets: string[]  
+    }
+};
+
 // Message Types for Engine Communication
 export type MessageToEngine = {
     type: typeof CREATE_ORDER,
