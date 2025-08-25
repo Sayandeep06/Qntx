@@ -11,7 +11,6 @@ type subSchema = {
 }
 
 export class User{
-    public static socket: WebSocket | null = null
     private static instance: User;
     private users: usersSchema;
     private subs: subSchema;
@@ -21,49 +20,83 @@ export class User{
     }
 
     public static getInstance(){
-        if(!this.getInstance){
+        if(!this.instance){
             this.instance = new User();
         }
         return this.instance
     }
 
-    public addUser(ws: ws.WebSocket){
-        const instance = User.getInstance()
+    public addUser(socket: ws.WebSocket){
         const id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        instance.users.push({
+        this.users.push({
             id,
-            socket: ws,
+            socket: socket,
             market: []
         })
         return id;
     }
 
-    public static subscribe(userId: string, market: string){
+    public subscribe(userId: string, market: string){
         try{
-            const instance = this.getInstance();
-            const user = instance.users.find(u => u.id === userId);
+            const user = this.users.find(u => u.id === userId);
 
             if(!user){
                 console.log("User doesn't exist")
                 return;
             }
 
-            instance.users.forEach(u => {
-                if(u.id === userId){
-                    u.market.push(market)
-                }
-                return u;
-            })
-
-            if(!instance.subs[market]){
-                instance.subs[market] = []
+            if (!user.market.includes(market)) {
+                user.market.push(market);
             }
-            const alreadyExists = instance.subs[market].some(u => u.id === userId);
+
+            if(!this.subs[market]){
+                this.subs[market] = []
+            }
+            const alreadyExists = this.subs[market].some(u => u.id === userId);
             if(!alreadyExists){
-                instance.subs[market].push(user)
+                this.subs[market].push(user)
             }
         }catch(error){
             console.log("Error while subscribing to ws server")
+        }
+    }
+
+    public unsubscribe(userId: string, market: string){
+        try{
+            const user = this.users.find(u => u.id === userId);
+
+            if(!user){
+                console.log("User doesn't exist")
+                return;
+            }
+
+            user.market = user.market.filter(m => m !== market);
+
+            if(this.subs[market]){
+                this.subs[market] = this.subs[market].filter(u => u.id !== userId);
+            }
+        }catch(error){
+            console.log("Error while unsubscribing to ws server")
+        }
+    }
+
+    public removeUser(userId: string){
+        try{
+            const user = this.users.find(u => u.id === userId);
+            if(!user){
+                console.log("User doesn't exist")
+                return;
+            }
+            const symbols: string[] = user.market;
+            this.users = this.users.filter(u => u.id !== userId)
+
+            symbols.forEach(symbol => {
+                if(this.subs[symbol]){
+                    this.subs[symbol] = this.subs[symbol].filter(u => u.id !== userId)
+                }
+            });
+        }catch(error){
+            console.log("error deleting user")
         }
     }
 }
