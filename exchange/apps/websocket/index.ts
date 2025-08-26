@@ -9,14 +9,14 @@ wss.on('connection', (ws: ws.WebSocket)=>{
     const userId = userManager.addUser(ws);
     ws.on('message', (message: string)=>{
         const msg = JSON.parse(message)
-        if(msg.type = 'SUBSCRIBE'){
+        if(msg.type === 'SUBSCRIBE'){
             msg.market.forEach((symbol: string)=>{
                 userManager.subscribe(userId, symbol)
             })
         }
-        if(msg.type = 'UNSUBSCRIBE'){
+        if(msg.type === 'UNSUBSCRIBE'){
             msg.market.forEach((symbol: string)=>{
-                userManager.subscribe(userId, symbol)
+                userManager.unsubscribe(userId, symbol)
             })
         }
     })
